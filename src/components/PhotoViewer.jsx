@@ -1,40 +1,42 @@
 import { useEffect, useState } from 'react'
 
-import {
-  X,
-  ChevronLeft,
-  ChevronRight,
-  Image as ImageIcon
-} from 'lucide-react'
+import { X, ChevronLeft, ChevronRight, Image as ImageIcon } from 'lucide-react'
 
 import { formatBytes } from '../utils'
 
-export default function PhotoViewer({
-  photos,
-  index,
-  getUrl,
-  onClose,
-  onChange
-}) {
-  const [dimensions, setDimensions] = useState(null)
+export default function PhotoViewer({ photos, index, getUrl, onClose, onChange }) {
+  const [dimensionResult, setDimensionResult] = useState(null)
 
   const photo = photos[index]
 
   useEffect(() => {
-    setDimensions(null)
-
     if (!photo) return
 
     const image = new Image()
 
     image.onload = () => {
-      setDimensions(
-        `${image.naturalWidth} × ${image.naturalHeight}`
-      )
+      setDimensionResult({
+        photo,
+        value: `${image.naturalWidth} × ${image.naturalHeight}`,
+      })
+    }
+
+    image.onerror = () => {
+      setDimensionResult({
+        photo,
+        value: 'Unavailable',
+      })
     }
 
     image.src = getUrl(photo)
+
+    return () => {
+      image.onload = null
+      image.onerror = null
+    }
   }, [photo, getUrl])
+
+  const dimensions = dimensionResult?.photo === photo ? dimensionResult.value : null
 
   useEffect(() => {
     const handleKey = (event) => {
@@ -63,12 +65,7 @@ export default function PhotoViewer({
   if (!photo) return null
 
   return (
-    <div
-      className="viewer-backdrop"
-      onMouseDown={(e) =>
-        e.target === e.currentTarget && onClose()
-      }
-    >
+    <div className="viewer-backdrop" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
       <header className="viewer-top">
         <div className="viewer-title">
           <ImageIcon size={18} />
@@ -78,11 +75,7 @@ export default function PhotoViewer({
           </small>
         </div>
 
-        <button
-          className="icon-button"
-          onClick={onClose}
-          aria-label="Close viewer"
-        >
+        <button className="icon-button" onClick={onClose} aria-label="Close viewer">
           <X />
         </button>
       </header>
@@ -97,11 +90,7 @@ export default function PhotoViewer({
       </button>
 
       <div className="viewer-image-wrap">
-        <img
-          className="viewer-image"
-          src={getUrl(photo)}
-          alt={photo.name}
-        />
+        <img className="viewer-image" src={getUrl(photo)} alt={photo.name} />
       </div>
 
       <button
@@ -135,14 +124,10 @@ export default function PhotoViewer({
 
         <div className="metadata-row">
           <span>Modified</span>
-          <strong>
-            {new Date(photo.lastModified).toLocaleDateString()}
-          </strong>
+          <strong>{new Date(photo.lastModified).toLocaleDateString()}</strong>
         </div>
 
-        <p className="keyboard-hint">
-          Use ← → to navigate · Esc to close
-        </p>
+        <p className="keyboard-hint">Use ← → to navigate · Esc to close</p>
       </aside>
     </div>
   )

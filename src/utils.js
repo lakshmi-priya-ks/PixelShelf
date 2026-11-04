@@ -1,11 +1,7 @@
-const IMAGE_EXTENSIONS =
-  /\.(jpe?g|png|gif|webp|bmp|avif|svg|tiff?)$/i
+const IMAGE_EXTENSIONS = /\.(jpe?g|png|gif|webp|bmp|avif|svg|tiff?)$/i
 
 export function isImage(file) {
-  return (
-    file.type.startsWith('image/') ||
-    IMAGE_EXTENSIONS.test(file.name)
-  )
+  return file.type.startsWith('image/') || IMAGE_EXTENSIONS.test(file.name)
 }
 
 export function formatBytes(bytes) {
@@ -23,8 +19,5 @@ export function formatBytes(bytes) {
 }
 
 export function getFolderName(files) {
-  return (
-    files[0]?.webkitRelativePath?.split('/')[0] ||
-    'Selected folder'
-  )
+  return files[0]?.webkitRelativePath?.split('/')[0] || 'Selected folder'
 }

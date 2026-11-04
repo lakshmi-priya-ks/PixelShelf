@@ -8,21 +8,10 @@ function PhotoCard({ columnIndex, rowIndex, style, data }) {
 
   return (
     <div style={style} className="grid-cell">
-      <button
-        className="photo-card"
-        onClick={() => data.onOpen(index)}
-        title={photo.name}
-      >
-        <img
-          src={data.getUrl(photo)}
-          alt={photo.name}
-          loading="lazy"
-          draggable="false"
-        />
+      <button className="photo-card" onClick={() => data.onOpen(index)} title={photo.name}>
+        <img src={data.getUrl(photo)} alt={photo.name} loading="lazy" draggable="false" />
 
-        <span className="photo-name">
-          {photo.name}
-        </span>
+        <span className="photo-name">{photo.name}</span>
       </button>
     </div>
   )
